@@ -1,5 +1,19 @@
-import { TextField, Button, Box } from "@mui/material";
+import React from "react";
+import {
+  TextField,
+  Button,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { useFormControls } from "./UserFormControls";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import DatePicker from "@mui/lab/DatePicker";
+import { useState } from "react";
+import SendIcon from "@mui/icons-material/Send";
 
 const inputFieldValues = [
   {
@@ -18,9 +32,24 @@ const inputFieldValues = [
     id: "#CountryOfWork",
   },
   {
-    name: "DOB",
-    label: "Date Of Birth",
-    id: "#DateOfWork",
+    name: "maritalStatus",
+    label: "Marital Status",
+    id: "#maritalStatus",
+  },
+  {
+    name: "socialInsuranceNumber",
+    label: "Social insurance number",
+    id: "#SocialInsuranceNumber",
+  },
+  {
+    name: "workingHours",
+    label: "Working Hours",
+    id: "#WorkingHours",
+  },
+  {
+    name: "numberOfChildren",
+    label: "Number Of Children",
+    id: "#numberOfChildren",
   },
 ];
 
@@ -46,13 +75,55 @@ const Item = (props) => {
 const UserForm = () => {
   const { handleInputValue, handleFormSubmit, formIsValid, errors } =
     useFormControls();
+  const [dateSelected, setDate] = useState(null);
+  const [selectedCountry, setCountry] = useState("Brazil");
   return (
     <form mt={100} onSubmit={handleFormSubmit}>
-      <Box sx={{ width: "97%", ml: 2.5 }}>
+      <Box sx={{ width: "97%", ml: 2.5, mt: 10 }}>
         <Item
-          sx={{ width: "20%", display: "flex", mb: 2, flexDirection: "column" }}
+          sx={{
+            "& .MuiTextField-root": { mb: 2, width: "30ch" },
+            width: "30ch",
+            display: "flex",
+            flexDirection: "column",
+          }}
         >
+          <FormControl sx={{ mb: 2 }}>
+            <InputLabel id="demo-simple-select-label">Country</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={selectedCountry}
+              label="Country"
+              onChange={(e) => {
+                setCountry(e.target.value);
+              }}
+            >
+              <MenuItem value={"Spain"}>Spain</MenuItem>
+              <MenuItem value={"Ghana"}>Ghana</MenuItem>
+              <MenuItem value={"Brazil"}>Brazil</MenuItem>
+            </Select>
+          </FormControl>
+
           {inputFieldValues.map((inputFieldValue, index) => {
+            if (
+              selectedCountry !== "Ghana" &&
+              (inputFieldValue.name === "maritalStatus" ||
+                inputFieldValue.name === "numberOfChildren")
+            ) {
+              return "";
+            } else if (
+              selectedCountry !== "Brazil" &&
+              inputFieldValue.name === "workingHours"
+            ) {
+              return "";
+            } else if (
+              selectedCountry !== "Spain" &&
+              (inputFieldValue.name === "maritalStatus" ||
+                inputFieldValue.name === "socialInsuranceNumber")
+            ) {
+              return "";
+            }
             return (
               <TextField
                 key={index}
@@ -70,7 +141,20 @@ const UserForm = () => {
               />
             );
           })}
-          <Button type="submit">Send Message</Button>
+
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Date of Birth"
+              value={dateSelected}
+              onChange={(e) => {
+                setDate(e.target.value);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+          <Button type="submit" variant="outlined" startIcon={<SendIcon />}>
+            Submit
+          </Button>
         </Item>
       </Box>
     </form>

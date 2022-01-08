@@ -16,7 +16,6 @@ export const useFormControls = () => {
   const [errors, setErrors] = useState({});
 
   const validate = (fieldValues = values) => {
-    debugger;
     let temp = { ...errors };
 
     if ("firstName" in fieldValues)
