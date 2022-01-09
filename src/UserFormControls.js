@@ -81,7 +81,6 @@ export const useFormControls = () => {
     e.preventDefault();
     validate();
     if (formIsValid()) {
-      debugger;
 
       console.log("values", display(values));
       alert("You've posted your form!");
