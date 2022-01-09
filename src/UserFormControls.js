@@ -1,10 +1,14 @@
 import { useState } from "react";
 
 const initialFormValues = {
-  firstName: "",
-  lastName: "",
-  countryOfWork: "",
-  dob: "",
+  firstName: null,
+  lastName: null,
+  countryOfWork: null,
+  maritalStatus: null,
+  socialInsuranceNumber: null,
+  workingHours: null,
+  numberOfChildren: null,
+  dob: null,
   formSubmitted: false,
   success: false,
 };
@@ -23,14 +27,30 @@ export const useFormControls = () => {
 
     if ("lastName" in fieldValues) {
       temp.lastName = fieldValues.lastName ? "" : "This field is required.";
-      if (fieldValues.lastName)
-        temp.lastName = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(fieldValues.lastName)
-          ? ""
-          : "Email is not valid.";
     }
 
     if ("countryOfWork" in fieldValues)
       temp.countryOfWork = fieldValues.countryOfWork
+        ? ""
+        : "This field is required.";
+
+    if ("maritalStatus" in fieldValues)
+      temp.maritalStatus = fieldValues.maritalStatus
+        ? ""
+        : "This field is required.";
+
+    if ("numberOfChildren" in fieldValues)
+      temp.numberOfChildren = fieldValues.numberOfChildren
+        ? ""
+        : "This field is required.";
+
+    if ("socialInsuranceNumber" in fieldValues)
+      temp.socialInsuranceNumber = fieldValues.socialInsuranceNumber
+        ? ""
+        : "This field is required.";
+
+    if ("workingHours" in fieldValues)
+      temp.workingHours = fieldValues.workingHours
         ? ""
         : "This field is required.";
 
@@ -48,11 +68,22 @@ export const useFormControls = () => {
     validate({ [name]: value });
   };
 
+  const display = (obj) => {
+    for (var propName in obj) {
+      if (obj[propName] === null || obj[propName] === undefined) {
+        delete obj[propName];
+      }
+    }
+    return obj;
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     validate();
     if (formIsValid()) {
-      console.log("values", values);
+      debugger;
+
+      console.log("values", display(values));
       alert("You've posted your form!");
     }
   };

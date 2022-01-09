@@ -149,8 +149,14 @@ const UserForm = () => {
             <DatePicker
               label="Date of Birth"
               value={dateSelected}
-              onChange={(e) => {
-                setDate(e.target.value);
+              onChange={(date) => {
+                setDate(date);
+                handleInputValue({
+                  target: {
+                    name: "dob",
+                    value: date,
+                  },
+                });
               }}
               renderInput={(params) => <TextField {...params} />}
             />
