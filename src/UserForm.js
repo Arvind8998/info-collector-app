@@ -108,19 +108,22 @@ const UserForm = () => {
           {inputFieldValues.map((inputFieldValue, index) => {
             if (
               selectedCountry !== "Ghana" &&
-              (inputFieldValue.name === "maritalStatus" ||
-                inputFieldValue.name === "numberOfChildren")
-            ) {
-              return "";
-            } else if (
-              selectedCountry !== "Brazil" &&
-              inputFieldValue.name === "workingHours"
+              (inputFieldValue.name === "numberOfChildren" ||
+                (selectedCountry !== "Spain" &&
+                  inputFieldValue.name === "maritalStatus"))
             ) {
               return "";
             } else if (
               selectedCountry !== "Spain" &&
-              (inputFieldValue.name === "maritalStatus" ||
+              ((selectedCountry !== "Ghana" &&
+                inputFieldValue.name === "maritalStatus") ||
                 inputFieldValue.name === "socialInsuranceNumber")
+            ) {
+              return "";
+            }
+            if (
+              selectedCountry !== "Brazil" &&
+              inputFieldValue.name === "workingHours"
             ) {
               return "";
             }
