@@ -14,44 +14,8 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DatePicker from "@mui/lab/DatePicker";
 import { useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
-
-const inputFieldValues = [
-  {
-    name: "firstName",
-    label: "First Name",
-    id: "#FirstName",
-  },
-  {
-    name: "lastName",
-    label: "Last Name",
-    id: "#LastName",
-  },
-  {
-    name: "countryOfWork",
-    label: "Country Of Work",
-    id: "#CountryOfWork",
-  },
-  {
-    name: "maritalStatus",
-    label: "Marital Status",
-    id: "#maritalStatus",
-  },
-  {
-    name: "socialInsuranceNumber",
-    label: "Social insurance number",
-    id: "#SocialInsuranceNumber",
-  },
-  {
-    name: "workingHours",
-    label: "Working Hours",
-    id: "#WorkingHours",
-  },
-  {
-    name: "numberOfChildren",
-    label: "Number Of Children",
-    id: "#numberOfChildren",
-  },
-];
+import { inputFieldValues } from "./FormDataUtils";
+import { useStateValue } from "./StateProvider";
 
 const Item = (props) => {
   const { sx, ...other } = props;
@@ -73,10 +37,43 @@ const Item = (props) => {
 };
 
 const UserForm = () => {
-  const { handleInputValue, handleFormSubmit, formIsValid, errors } =
-    useFormControls();
+  const [{ selectedCountry }, dispatch] = useStateValue();
+  const handleCountryUpdate = (e) => {
+    dispatch({
+      type: "SET_COUNTRY",
+      selectedCountry: e.target.value,
+    });
+  };
+
+  const customElement = (elementName) => {
+    switch (elementName) {
+      case "DateSelector":
+        return (
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Date of Birth"
+              value={dateSelected}
+              onChange={(date) => {
+                setDate(date);
+                handleInputValue({
+                  target: {
+                    name: "dob",
+                    value: date,
+                  },
+                });
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+        );
+      default:
+        return "";
+    }
+  };
+
+  const { handleInputValue, handleFormSubmit, errors } = useFormControls();
+
   const [dateSelected, setDate] = useState(null);
-  const [selectedCountry, setCountry] = useState("Brazil");
   return (
     <form mt={100} onSubmit={handleFormSubmit}>
       <Box sx={{ width: "97%", ml: 2.5, mt: 10 }}>
@@ -96,7 +93,7 @@ const UserForm = () => {
               value={selectedCountry}
               label="Country"
               onChange={(e) => {
-                setCountry(e.target.value);
+                handleCountryUpdate(e);
               }}
             >
               <MenuItem value={"Spain"}>Spain</MenuItem>
@@ -105,29 +102,10 @@ const UserForm = () => {
             </Select>
           </FormControl>
 
-          {inputFieldValues.map((inputFieldValue, index) => {
-            if (
-              selectedCountry !== "Ghana" &&
-              (inputFieldValue.name === "numberOfChildren" ||
-                (selectedCountry !== "Spain" &&
-                  inputFieldValue.name === "maritalStatus"))
-            ) {
-              return "";
-            } else if (
-              selectedCountry !== "Spain" &&
-              ((selectedCountry !== "Ghana" &&
-                inputFieldValue.name === "maritalStatus") ||
-                inputFieldValue.name === "socialInsuranceNumber")
-            ) {
-              return "";
-            }
-            if (
-              selectedCountry !== "Brazil" &&
-              inputFieldValue.name === "workingHours"
-            ) {
-              return "";
-            }
-            return (
+          {inputFieldValues[selectedCountry]?.map((inputFieldValue, index) => {
+            return inputFieldValue.customElement ? (
+              customElement(inputFieldValue.customElement)
+            ) : (
               <TextField
                 key={index}
                 onBlur={handleInputValue}
@@ -145,22 +123,6 @@ const UserForm = () => {
             );
           })}
 
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Date of Birth"
-              value={dateSelected}
-              onChange={(date) => {
-                setDate(date);
-                handleInputValue({
-                  target: {
-                    name: "dob",
-                    value: date,
-                  },
-                });
-              }}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </LocalizationProvider>
           <Button type="submit" variant="outlined" startIcon={<SendIcon />}>
             Submit
           </Button>
