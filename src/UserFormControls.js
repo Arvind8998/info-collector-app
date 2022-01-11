@@ -1,12 +1,16 @@
-import { useState } from "react";
-import { commonFormReducer } from "./FormDataUtils";
+import { useEffect, useState } from "react";
+import { commonFormReducer, resetFormData } from "./FormDataUtils";
 import { useStateValue } from "./StateProvider";
 
 export const useFormControls = () => {
+  const [initialControlFormData, setFormData] = useState({});
   const [{ selectedCountry }] = useStateValue();
-  const initialFormattedFormControlData = commonFormReducer(selectedCountry);
-  console.log(initialFormattedFormControlData);
-  const [values, setValues] = useState(initialFormattedFormControlData);
+
+  useEffect(() => {
+    setFormData(commonFormReducer(selectedCountry));
+  }, [selectedCountry]);
+
+  const [values, setValues] = useState(initialControlFormData);
   const [errors, setErrors] = useState({});
 
   const validate = (fieldValues = values) => {
@@ -77,9 +81,10 @@ export const useFormControls = () => {
     validate();
     if (formIsValid()) {
       console.log("values", display(values));
-      alert("You've posted your form!");
+      setFormData(resetFormData(selectedCountry));
     }
   };
+
   const formIsValid = (fieldValues = values) => {
     const isValid =
       fieldValues.firstName &&

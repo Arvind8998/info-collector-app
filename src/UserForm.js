@@ -14,7 +14,7 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DatePicker from "@mui/lab/DatePicker";
 import { useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
-import { inputFieldValues } from "./FormDataUtils";
+import { CountryInputFields } from "./FormDataUtils";
 import { useStateValue } from "./StateProvider";
 
 const Item = (props) => {
@@ -49,7 +49,7 @@ const UserForm = () => {
     switch (elementName) {
       case "DateSelector":
         return (
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <LocalizationProvider dateAdapter={AdapterDateFns} key="#DatePicker">
             <DatePicker
               label="Date of Birth"
               value={dateSelected}
@@ -88,8 +88,9 @@ const UserForm = () => {
           <FormControl sx={{ mb: 2 }}>
             <InputLabel id="demo-simple-select-label">Country</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
+              labelId="country-select"
               id="demo-simple-select"
+              data-testid="test_country_ele"
               value={selectedCountry}
               label="Country"
               onChange={(e) => {
@@ -102,26 +103,28 @@ const UserForm = () => {
             </Select>
           </FormControl>
 
-          {inputFieldValues[selectedCountry]?.map((inputFieldValue, index) => {
-            return inputFieldValue.customElement ? (
-              customElement(inputFieldValue.customElement)
-            ) : (
-              <TextField
-                key={index}
-                onBlur={handleInputValue}
-                onChange={handleInputValue}
-                name={inputFieldValue.name}
-                label={inputFieldValue.label}
-                multiline={inputFieldValue.multiline ?? false}
-                rows={inputFieldValue.rows ?? 1}
-                autoComplete="none"
-                {...(errors[inputFieldValue.name] && {
-                  error: true,
-                  helperText: errors[inputFieldValue.name],
-                })}
-              />
-            );
-          })}
+          {CountryInputFields[selectedCountry]?.map(
+            (inputFieldValue, index) => {
+              return inputFieldValue.customElement ? (
+                customElement(inputFieldValue.customElement)
+              ) : (
+                <TextField
+                  key={index}
+                  onBlur={handleInputValue}
+                  onChange={handleInputValue}
+                  name={inputFieldValue.name}
+                  label={inputFieldValue.label}
+                  multiline={inputFieldValue.multiline ?? false}
+                  rows={inputFieldValue.rows ?? 1}
+                  autoComplete="none"
+                  {...(errors[inputFieldValue.name] && {
+                    error: true,
+                    helperText: errors[inputFieldValue.name],
+                  })}
+                />
+              );
+            }
+          )}
 
           <Button type="submit" variant="outlined" startIcon={<SendIcon />}>
             Submit

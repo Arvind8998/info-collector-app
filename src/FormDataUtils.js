@@ -29,7 +29,7 @@ export const commonFormFields = () => {
   ];
 };
 
-export const inputFieldValues = {
+export const CountryInputFields = {
   Spain: [
     ...commonFormFields(),
     {
@@ -69,14 +69,17 @@ export const inputFieldValues = {
 };
 
 export const commonFormReducer = (selectedCountry = "Brazil") => {
-  const commonFields = commonFormFields();
   const mergedFieldsData = [
-    ...commonFields,
-    ...inputFieldValues[selectedCountry],
+    ...commonFormFields(),
+    ...CountryInputFields[selectedCountry],
   ];
   const commonInitialFormData = {};
   mergedFieldsData.forEach((el) => {
     commonInitialFormData[el.name] = null;
   });
   return commonInitialFormData;
+};
+
+export const resetFormData = (selectedCountry) => {
+  return [...commonFormFields(), ...CountryInputFields[selectedCountry]];
 };
